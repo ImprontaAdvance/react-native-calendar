@@ -8,33 +8,41 @@ export default class Calendar extends Component {
     static propTypes = {
         firstDayOfWeek: PropTypes.number.isRequired,
         nameOfDays: PropTypes.arrayOf(PropTypes.string),
-        dateFormat: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.func
+        eventDates: PropTypes.arrayOf(
+            PropTypes.oneOfType([
+                PropTypes.string,
+                PropTypes.instanceOf(moment)
+            ])
+        ),
+        dateFormat: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.func
         ]),
-        prevButton: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.func
+        prevButton: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.func
         ]),
-        nextButton: React.PropTypes.oneOfType([
-            React.PropTypes.string,
-            React.PropTypes.func
+        nextButton: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.func
         ])
     };
 
     static defaultProps = {
         firstDayOfWeek: 0,
         nameOfDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+        eventDates: [],
         dateFormat: 'MMMM YYYY',
         prevButton: 'Prev',
-        nextButton: 'Next'
+        nextButton: 'Next',
     };
 
     constructor(props) {
         super(props);
 
         this.state = {
-            currentMonth: moment(this.props.date)
+            currentMonth: moment(this.props.date),
+            selectedDate: moment()
         };
     }
 
@@ -47,6 +55,12 @@ export default class Calendar extends Component {
     goToPrevMonth() {
         this.setState({
             currentMonth: moment(this.state.currentMonth).subtract(1, 'month')
+        });
+    }
+
+    selectDate(date) {
+        this.setState({
+            selectedDate: moment(date)
         });
     }
 
@@ -71,8 +85,10 @@ export default class Calendar extends Component {
 
                 days.push(
                     <Day
-                        key={`${i},${j}`}
-                        onPress={this._selectDate}
+                        key={`${i}x${j}`}
+                        events={this.props.eventDates.filter(d => moment(d).isSame(currentDay, 'd'))}
+                        isSelected={currentDay.isSame(this.state.selectedDate, 'd')}
+                        onPress={this.selectDate.bind(this, moment(currentDay))}
                         currentDay={currentDay} />
                 );
 
@@ -84,7 +100,6 @@ export default class Calendar extends Component {
             // Fill remaining cells
             for(let x = days.length; x < 7; x++)
                 days.push(<Day key={'filler-' + x} filler={true} />);
-
 
             weekRows.push(<View key={weekRows.length} style={[styles.weekRow]}>{days}</View>);
         }
@@ -174,10 +189,30 @@ export default class Calendar extends Component {
 };
 
 class Day extends Component {
+    static propTypes = {
+        filler: PropTypes.bool,
+        isSelected: PropTypes.bool,
+        onPress: PropTypes.func
+    };
+
     render() {
+        if(this.props.filler)
+            return <View style={styles.day}><Text>{' '}</Text></View>;
+
+        const isToday = this.props.currentDay.isSame(moment(), 'd');
+        const hasEvents = this.props.events.length > 0;
+
+        let style = [];
+        style.push(styles.day);
+        isToday && style.push(styles.today);
+        hasEvents && style.push(styles.dayWithEvents);
+        this.props.isSelected && style.push(styles.daySelected);
+
         return (
-            <View style={styles.day}>
-                <Text>{this.props.filler ? '-' : this.props.currentDay.format('DD')}</Text>
+            <View style={style}>
+                <TouchableOpacity onPress={this.props.onPress}>
+                    <Text>{this.props.currentDay.format('DD')}</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -185,7 +220,7 @@ class Day extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'red',
+
     },
     heading: {
         flexDirection: 'row',
@@ -211,7 +246,15 @@ const styles = StyleSheet.create({
     },
     day: {
         flex: 1,
-        backgroundColor: 'yellow',
         alignItems: 'center'
+    },
+    today: {
+        backgroundColor: 'red'
+    },
+    dayWithEvents: {
+        backgroundColor: 'lime',
+    },
+    daySelected: {
+        backgroundColor: 'blue'
     }
 });
