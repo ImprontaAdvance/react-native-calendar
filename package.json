@@ -1,0 +1,8 @@
+{
+  "name": "@improntaadvance/react-native-calendar",
+  "main": "Calendar.js",
+  "version": "0.1.0",
+  "dependencies": {
+    "moment": "^2.11.1"
+  }
+}
