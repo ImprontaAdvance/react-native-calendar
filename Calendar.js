@@ -27,12 +27,7 @@ export default class Calendar extends Component {
             PropTypes.string,
             PropTypes.func
         ]),
-        calendarStyle: React.PropTypes.shape({
-            calendarContainer: React.PropTypes.object,
-            gridContainer: React.PropTypes.object,
-            monthContainer: React.PropTypes.object,
-            weekRow: React.PropTypes.object,
-        }),
+        calendarStyle: React.PropTypes.object,
         dayStyle: React.PropTypes.object
     };
 
@@ -166,8 +161,8 @@ export default class Calendar extends Component {
         var names = [];
         for(let i = 0; i < 7; i++)
             names.push(
-                <View key={`DayName-${i}`} style={styles.dayName}>
-                    <Text>{this.props.nameOfDays[(this.props.firstDayOfWeek + i) % 7]}</Text>
+                <View key={`DayName-${i}`} style={[styles.dayName, this.props.calendarStyle.dayName]}>
+                    <Text style={this.props.calendarStyle.dayNameText}>{this.props.nameOfDays[(this.props.firstDayOfWeek + i) % 7]}</Text>
                 </View>
             );
 
@@ -210,9 +205,6 @@ const styles = StyleSheet.create({
     dayNames: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderColor: '#000',
-        borderTopWidth: 1,
-        borderBottomWidth: 1
     },
     dayName: {
         flex: 1,
@@ -222,7 +214,5 @@ const styles = StyleSheet.create({
     weekRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderColor: '#000',
-        borderBottomWidth: 1,
     }
 });

@@ -13,13 +13,7 @@ export default class Day extends Component {
             ])
         ),
         onPress: PropTypes.func,
-        dayStyle: React.PropTypes.shape({
-            filler: React.PropTypes.object,
-            day: React.PropTypes.object,
-            today: React.PropTypes.object,
-            dayWithEvents: React.PropTypes.object,
-            daySelected: React.PropTypes.object,
-        }),
+        dayStyle: React.PropTypes.object,
     };
 
     static defaultProps = {
