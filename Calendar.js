@@ -43,7 +43,8 @@ export default class Calendar extends Component {
         dateFormat: 'MMMM YYYY',
         prevButton: 'Prev',
         nextButton: 'Next',
-        customStyle: {}
+        calendarStyle: {},
+        dayStyle: {}
     };
 
     constructor(props) {
@@ -111,10 +112,10 @@ export default class Calendar extends Component {
             for(let x = days.length; x < 7; x++)
                 days.push(<Day key={'filler-' + x} filler={true} />);
 
-            weekRows.push(<View key={weekRows.length} style={[styles.weekRow, this.props.customStyle.weekRow]}>{days}</View>);
+            weekRows.push(<View key={weekRows.length} style={[styles.weekRow, this.props.calendarStyle.weekRow]}>{days}</View>);
         }
 
-        return <View key={date} style={[styles.monthContainer, this.props.customStyle.monthContainer]}>{weekRows}</View>;
+        return <View key={date} style={[styles.monthContainer, this.props.calendarStyle.monthContainer]}>{weekRows}</View>;
     }
 
     _renderPrevButton() {
@@ -187,10 +188,10 @@ export default class Calendar extends Component {
 
     render() {
         return (
-            <View style={[styles.container, this.props.customStyle.calendarContainer]}>
+            <View style={[styles.container, this.props.calendarStyle.calendarContainer]}>
                 {this.renderHeading()}
 
-                <View style={[styles.grid, this.props.customStyle.gridContainer]}>
+                <View style={[styles.grid, this.props.calendarStyle.gridContainer]}>
                     {this.renderMonthGrid(this.state.currentMonth)}
                 </View>
             </View>
