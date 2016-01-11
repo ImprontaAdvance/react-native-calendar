@@ -1,4 +1,5 @@
 import React, {Component, PropTypes, View, Text, Image, StyleSheet, Platform, TouchableOpacity} from 'react-native';
+import Day from './Day';
 import moment from 'moment';
 
 const MAX_COLUMNS = 7;
@@ -25,7 +26,14 @@ export default class Calendar extends Component {
         nextButton: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.func
-        ])
+        ]),
+        calendarStyle: React.PropTypes.shape({
+            calendarContainer: React.PropTypes.object,
+            gridContainer: React.PropTypes.object,
+            monthContainer: React.PropTypes.object,
+            weekRow: React.PropTypes.object,
+        }),
+        dayStyle: React.PropTypes.object
     };
 
     static defaultProps = {
@@ -35,6 +43,7 @@ export default class Calendar extends Component {
         dateFormat: 'MMMM YYYY',
         prevButton: 'Prev',
         nextButton: 'Next',
+        customStyle: {}
     };
 
     constructor(props) {
@@ -89,6 +98,7 @@ export default class Calendar extends Component {
                         events={this.props.eventDates.filter(d => moment(d).isSame(currentDay, 'd'))}
                         isSelected={currentDay.isSame(this.state.selectedDate, 'd')}
                         onPress={this.selectDate.bind(this, moment(currentDay))}
+                        dayStyle={this.props.dayStyle}
                         currentDay={currentDay} />
                 );
 
@@ -101,10 +111,10 @@ export default class Calendar extends Component {
             for(let x = days.length; x < 7; x++)
                 days.push(<Day key={'filler-' + x} filler={true} />);
 
-            weekRows.push(<View key={weekRows.length} style={[styles.weekRow]}>{days}</View>);
+            weekRows.push(<View key={weekRows.length} style={[styles.weekRow, this.props.customStyle.weekRow]}>{days}</View>);
         }
 
-        return <View key={date} style={styles.monthContainer}>{weekRows}</View>;
+        return <View key={date} style={[styles.monthContainer, this.props.customStyle.monthContainer]}>{weekRows}</View>;
     }
 
     _renderPrevButton() {
@@ -177,46 +187,16 @@ export default class Calendar extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, this.props.customStyle.calendarContainer]}>
                 {this.renderHeading()}
 
-                <View style={styles.grid}>
-                {this.renderMonthGrid(this.state.currentMonth)}
+                <View style={[styles.grid, this.props.customStyle.gridContainer]}>
+                    {this.renderMonthGrid(this.state.currentMonth)}
                 </View>
             </View>
         );
     }
 };
-
-class Day extends Component {
-    static propTypes = {
-        filler: PropTypes.bool,
-        isSelected: PropTypes.bool,
-        onPress: PropTypes.func
-    };
-
-    render() {
-        if(this.props.filler)
-            return <View style={styles.day}><Text>{' '}</Text></View>;
-
-        const isToday = this.props.currentDay.isSame(moment(), 'd');
-        const hasEvents = this.props.events.length > 0;
-
-        let style = [];
-        style.push(styles.day);
-        isToday && style.push(styles.today);
-        hasEvents && style.push(styles.dayWithEvents);
-        this.props.isSelected && style.push(styles.daySelected);
-
-        return (
-            <View style={style}>
-                <TouchableOpacity onPress={this.props.onPress}>
-                    <Text>{this.props.currentDay.format('DD')}</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -243,18 +223,5 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderColor: '#000',
         borderBottomWidth: 1,
-    },
-    day: {
-        flex: 1,
-        alignItems: 'center'
-    },
-    today: {
-        backgroundColor: 'red'
-    },
-    dayWithEvents: {
-        backgroundColor: 'lime',
-    },
-    daySelected: {
-        backgroundColor: 'blue'
     }
 });
