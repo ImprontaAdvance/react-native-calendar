@@ -22,7 +22,7 @@ export default class Day extends Component {
 
     render() {
         if(this.props.filler)
-            return <View style={[styles.day, this.props.dayStyle.filler]}><Text>{' '}</Text></View>;
+            return <View style={[styles.day, this.props.dayStyle.day, this.props.dayStyle.filler]}><Text>{' '}</Text></View>;
 
         const isToday = this.props.currentDay.isSame(moment(), 'd');
         const hasEvents = this.props.events.length > 0;
