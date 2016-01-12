@@ -33,6 +33,7 @@ export default class Calendar extends Component {
         ]),
         onMonthChange: PropTypes.func,
         onDateSelect: PropTypes.func,
+        renderDay: PropTypes.func.isRequired,
         calendarStyle: PropTypes.object,
         dayStyle: PropTypes.object
     };
@@ -45,7 +46,8 @@ export default class Calendar extends Component {
         prevButton: 'Prev',
         nextButton: 'Next',
         calendarStyle: {},
-        dayStyle: {}
+        dayStyle: {},
+        renderDay: (props) => <Day {...props} />
     };
 
     constructor(props) {
@@ -69,7 +71,7 @@ export default class Calendar extends Component {
 
     goToPrevMonth() {
         let previousMonth = moment(this.state.currentMonth).subtract(1, 'month');
-        
+
         this.setState({
             currentMonth: previousMonth
         });
@@ -101,20 +103,26 @@ export default class Calendar extends Component {
 
             // Stop at the end of rows or when endIndex is reached
             for (var j = 0; j < MAX_COLUMNS && filled < endIndex; j++, filled++) {
-                if (filled < startIndex) {
-                    days.push(<Day key={`${i},${j}`} filler={true} />);
+                if(filled < startIndex) {
+                    let dayProps = {
+                        key: `${i},${j}`,
+                        filler: true
+                    };
+
+                    days.push(this.props.renderDay(dayProps));
                     continue;
                 }
 
-                days.push(
-                    <Day
-                        key={`${i}x${j}`}
-                        events={this.props.eventDates.filter(d => moment(d).isSame(currentDay, 'd'))}
-                        isSelected={currentDay.isSame(this.state.selectedDate, 'd')}
-                        onPress={this.selectDate.bind(this, moment(currentDay))}
-                        dayStyle={this.props.dayStyle}
-                        currentDay={currentDay} />
-                );
+                let dayProps = {
+                    key: `${i}x${j}`,
+                    events: this.props.eventDates.filter(d => moment(d).isSame(currentDay, 'd')),
+                    isSelected: currentDay.isSame(this.state.selectedDate, 'd'),
+                    onPress: this.selectDate.bind(this, moment(currentDay)),
+                    dayStyle: this.props.dayStyle,
+                    currentDay: currentDay,
+                }
+
+                days.push(this.props.renderDay(dayProps));
 
                 // clone currentDay to avoid side effect
                 currentDay = moment(currentDay).add(1, 'days');
