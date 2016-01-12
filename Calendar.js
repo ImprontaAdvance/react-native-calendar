@@ -31,8 +31,10 @@ export default class Calendar extends Component {
             PropTypes.string,
             PropTypes.func
         ]),
-        calendarStyle: React.PropTypes.object,
-        dayStyle: React.PropTypes.object
+        onMonthChange: PropTypes.func,
+        onDateSelect: PropTypes.func,
+        calendarStyle: PropTypes.object,
+        dayStyle: PropTypes.object
     };
 
     static defaultProps = {
@@ -56,21 +58,33 @@ export default class Calendar extends Component {
     }
 
     goToNextMonth() {
+        let nextMonth = moment(this.state.currentMonth).add(1, 'month');
+
         this.setState({
-            currentMonth: moment(this.state.currentMonth).add(1, 'month')
+            currentMonth: nextMonth
         });
+
+        this.props.onMonthChange && this.props.onMonthChange(nextMonth);
     }
 
     goToPrevMonth() {
+        let previousMonth = moment(this.state.currentMonth).subtract(1, 'month');
+        
         this.setState({
-            currentMonth: moment(this.state.currentMonth).subtract(1, 'month')
+            currentMonth: previousMonth
         });
+
+        this.props.onMonthChange && this.props.onMonthChange(previousMonth);
     }
 
     selectDate(date) {
+        let newSelectedDate = moment(date);
+
         this.setState({
-            selectedDate: moment(date)
+            selectedDate: newSelectedDate
         });
+
+        this.props.onDateSelect && this.props.onDateSelect(newSelectedDate);
     }
 
     renderMonthGrid(date) {
