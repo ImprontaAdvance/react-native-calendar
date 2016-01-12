@@ -40,7 +40,7 @@ export default class Day extends Component {
         return (
             <View style={style}>
                 <TouchableOpacity onPress={this.props.onPress}>
-                    <Text style={this.props.dayStyle.text}>{this.props.currentDay.format('DD')}</Text>
+                    <Text style={this.props.dayStyle.text}>{this.props.currentDay.format('D')}</Text>
                 </TouchableOpacity>
             </View>
         );
