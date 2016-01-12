@@ -7,6 +7,10 @@ const MAX_ROWS = 6;
 
 export default class Calendar extends Component {
     static propTypes = {
+        date: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.instanceOf(moment)
+        ]),
         firstDayOfWeek: PropTypes.number.isRequired,
         nameOfDays: PropTypes.arrayOf(PropTypes.string),
         eventDates: PropTypes.arrayOf(
